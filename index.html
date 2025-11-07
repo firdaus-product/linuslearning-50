@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="ms-MY">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kemahiran Pemulihan: Nombor 100–1000 (Pembelajaran)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { box-sizing: border-box; }
+    .activity-card { min-height: 400px; }
+    .number-card { transition: all .3s ease; cursor: pointer; }
+    .number-card:hover { transform: scale(1.05); }
+
+    /* Animasi */
+    @keyframes shake {
+      0% { transform: translateX(0); } 25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); } 75% { transform: translateX(-5px); }
+      100% { transform: translateX(0); }
+    }
+    .shake { animation: shake 0.5s ease; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    .pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes flash-bg {
+      0% { background-color: #f0fdf4; }
+      50% { background-color: #bbf7d0; }
+      100% { background-color: #f0fdf4; }
+    }
+    .flash-regroup { animation: flash-bg 0.8s ease; }
+
+    /* Aktiviti 1: Blok */
+    .block-100 { width: 80px; height: 80px; background: #fecaca; border: 2px solid #ef4444; margin: 2px; }
+    .block-10 { width: 8px; height: 80px; background: #bfdbfe; border: 1px solid #3b82f6; margin: 2px; }
+    .block-1 { width: 8px; height: 8px; background: #bbf7d0; border: 1px solid #22c55e; margin: 2px; }
+
+    /* Aktiviti 2: Kilang Biskut */
+    .cookie-sa { width: 12px; height: 12px; background: #fbbf24; border: 2px solid #b45309; border-radius: 50%; margin: 2px; }
+    .cookie-puluh { width: 30px; height: 40px; background: #a5b4fc; border: 2px solid #4338ca; border-radius: 4px; margin: 3px; display:inline-flex; align-items:center; justify-content:center; font-size:10px; color: #4338ca; font-weight:bold; }
+    .cookie-ratus { width: 80px; height: 80px; background: #f9a8d4; border: 2px solid #be185d; border-radius: 8px; margin: 4px; display:inline-flex; align-items:center; justify-content:center; font-size:14px; color: #be185d; font-weight:bold; }
+    
+    /* Aktiviti 5 */
+    .token-on { outline: 3px solid #A78BFA; }
+    .token-bad { outline: 3px solid #F87171; }
+    .result-good { background: #dcfce7; outline: 3px solid #22c55e; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-full">
+
+  <div class="bg-yellow-100 border-b-4 border-yellow-300 p-4 shadow-sm sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl">📚</span>
+        <span id="info-text" class="text-lg font-semibold text-gray-800">
+          Pilih aktiviti untuk mula belajar nombor!
+        </span>
+      </div>
+      <button id="speak-btn"
+              class="bg-yellow-300 hover:bg-yellow-400 text-yellow-800 font-bold py-2 px-4 rounded-full text-xl transition-colors duration-200"
+              onclick="speakInfo()">
+        🔊
+      </button>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto p-6">
+    <div class="bg-white rounded-xl shadow-lg p-6 mb-6 activity-card flex items-center justify-center">
+      <div id="activity-content" class="text-center w-full">
+        <div class="py-16">
+          <div class="text-6xl mb-4">🔢</div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">
+            Kemahiran Pemulihan: Nombor 100–1000
+          </h2>
+          <p class="text-xl text-gray-600 mb-8">
+            Pilih aktiviti di bawah untuk meneroka nilai nombor.
+          </p>
+          <div class="text-4xl">👇</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg p-6">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Pilih Aktiviti</h3>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+        <button onclick="loadActivity(1)"
+                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
+          🎯 Pembina Blok
+        </button>
+        <button onclick="loadActivity(2)"
+                class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
+          📦 Kilang Biskut
+        </button>
+        <button onclick="loadActivity(3)"
+                class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
+          ✍️ Penganalisis Nombor
+        </button>
+        <button onclick="loadActivity(4)"
+                class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
+          🔍 Kanta Nilai Digit
+        </button>
+        <button onclick="loadActivity(5)"
+                class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
+          🎪 Bina Sebutan
+        </button>
+      </div>
+
+      <div class="flex justify-center gap-4">
+        <button onclick="clearActivity()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg text-lg transition-colors duration-200">
+          🧹 Bersih
+        </button>
+        <button onclick="nextActivity()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg text-lg transition-colors duration-200">
+          ➡️ Seterusnya
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentActivity = 0;
+    let ttsEnabled = false;
+    let currentInfo = "Pilih aktiviti untuk mula belajar nombor!";
+    
+    // State untuk aktiviti
+    window.blockBuilderState = { r: 0, p: 0, s: 0, total: 0 };
+    window.cookieFactoryState = { s: 0, p: 0, r: 0, total: 0 };
+
+    /* ====== TTS ====== */
+    function speak(text) {
+      if (!ttsEnabled) return;
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      setTimeout(() => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'ms-MY';
+        u.rate = 0.9; u.pitch = 1.05;
+        const voices = window.speechSynthesis.getVoices();
+        const ms = voices.find(v => v.lang === 'ms-MY' || v.lang?.startsWith('ms'));
+        if (ms) u.voice = ms;
+        window.speechSynthesis.speak(u);
+      }, 100);
+    }
+    function setInfo(text) { currentInfo = text; document.getElementById('info-text').textContent = text; }
+    function speakInfo() {
+      if (!ttsEnabled) {
+        ttsEnabled = true;
+        const btn = document.getElementById('speak-btn');
+        btn.classList.add('bg-green-300', 'hover:bg-green-400');
+        btn.classList.remove('bg-yellow-300', 'hover:bg-yellow-400');
+      }
+      speak(currentInfo);
+    }
+
+    /* ====== Router ====== */
+    function loadActivity(n) {
+      currentActivity = n;
+      const content = document.getElementById('activity-content');
+      if (n === 1) return loadBlockBuilder(content);
+      if (n === 2) return loadCookieFactory(content);
+      if (n === 3) return loadPlaceValueExplorer(content);
+      if (n === 4) return loadDigitLens(content);
+      if (n === 5) return loadWordBuilder(content);
+    }
+
+    /* ====== Aktiviti 1: Pembina Blok (m/s 71-72) ====== */
+    function loadBlockBuilder(content) {
+      setInfo("Klik butang '+100', '+10', atau '+1' untuk menambah blok dan lihat jumlahnya.");
+      window.blockBuilderState = { r: 0, p: 0, s: 0, total: 0 };
+      content.innerHTML = `
+        <h3 class="text-2xl font-bold text-blue-600 mb-4">🎯 Pembina Blok</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div class="lg:col-span-1 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+            <div class="text-xl font-semibold mb-3">Kawalan:</div>
+            <div class="flex flex-col gap-3">
+              <button onclick="addBlock(100)" class="w-full bg-red-400 hover:bg-red-500 text-white font-bold py-3 px-4 rounded-lg text-lg">+1 Ratus</button>
+              <button onclick="addBlock(10)" class="w-full bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-lg">+1 Puluh</button>
+              <button onclick="addBlock(1)" class="w-full bg-green-400 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-lg text-lg">+1 Unit</button>
+            </div>
+            <div class="border-t-2 border-blue-200 my-4"></div>
+            <button onclick="resetBlocks()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">🧹 Set Semula</button>
+          </div>
+          
+          <div class="lg:col-span-2 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
+            <div class="mb-4">
+              <div class="text-sm font-semibold text-gray-600">Jumlah:</div>
+              <div id="block-total" class="text-6xl font-bold text-blue-800">0</div>
+              <div id="block-breakdown" class="text-lg text-gray-700 font-semibold">&nbsp;</div>
+            </div>
+            <div id="block-display" class="min-h-48 flex flex-wrap items-start p-2 bg-white border rounded-md">
+              </div>
+          </div>
+        </div>
+      `;
+    }
+    function addBlock(type) {
+      const state = window.blockBuilderState;
+      if (type === 100 && state.r < 9) state.r++;
+      else if (type === 10 && state.p < 9) state.p++;
+      else if (type === 1 && state.s < 9) state.s++;
+      else { setInfo("Had 9 untuk setiap jenis blok."); speak("Had 9"); return; }
+      renderBlocks();
+    }
+    function resetBlocks() {
+      window.blockBuilderState = { r: 0, p: 0, s: 0, total: 0 };
+      renderBlocks();
+    }
+    function renderBlocks() {
+      const { r, p, s } = window.blockBuilderState;
+      const display = document.getElementById('block-display');
+      display.innerHTML = '';
+      for (let i = 0; i < r; i++) display.innerHTML += '<div class="block-100" title="100"></div>';
+      for (let i = 0; i < p; i++) display.innerHTML += '<div class="block-10" title="10"></div>';
+      for (let i = 0; i < s; i++) display.innerHTML += '<div class="block-1" title="1"></div>';
+      
+      const total = r * 100 + p * 10 + s;
+      window.blockBuilderState.total = total;
+      document.getElementById('block-total').textContent = total;
+      
+      const breakdown = `${r} Ratus + ${p} Puluh + ${s} Sa`;
+      document.getElementById('block-breakdown').textContent = breakdown;
+      
+      setInfo(`Jumlah: ${total}. ${breakdown}.`);
+    }
+
+    /* ====== Aktiviti 2: Kilang Biskut (BARU) ====== */
+    function loadCookieFactory(content) {
+      setInfo("Klik '+1 Biskut' untuk menambah. Lihat apa jadi bila cukup 10!");
+      window.cookieFactoryState = { s: 0, p: 0, r: 0, total: 0 };
+      content.innerHTML = `
+        <h3 class="text-2xl font-bold text-green-600 mb-4">📦 Kilang Biskut</h3>
+        <div class="bg-gray-50 rounded-2xl p-6">
+          <div class="text-center mb-6">
+            <div class="text-sm text-gray-600">Jumlah Biskut:</div>
+            <div id="cookie-total" class="text-6xl font-bold text-green-800">0</div>
+            <div id="cookie-breakdown" class="text-lg text-gray-700 font-semibold">&nbsp;</div>
+          </div>
+          
+          <div class="flex justify-center gap-4 mb-6">
+            <button onclick="addCookie(1)" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg text-lg">
+              +1 Biskut
+            </button>
+            <button onclick="addCookie(10)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg">
+              +1 Pek (10)
+            </button>
+            <button onclick="resetCookies()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg text-lg">
+              🧹 Set Semula
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div class="bg-pink-100 p-4 rounded-lg border-2 border-pink-300">
+              <h4 class="font-bold text-pink-700 mb-2">Kotak (Ratus)</h4>
+              <div id="cookie-r" class="min-h-24 flex flex-wrap justify-center items-start"></div>
+            </div>
+            <div class="bg-blue-100 p-4 rounded-lg border-2 border-blue-300">
+              <h4 class="font-bold text-blue-700 mb-2">Pek (Puluh)</h4>
+              <div id="cookie-p" class="min-h-24 flex flex-wrap justify-center items-start"></div>
+            </div>
+            <div class="bg-yellow-100 p-4 rounded-lg border-2 border-yellow-300">
+              <h4 class="font-bold text-yellow-700 mb-2">Biskut (Sa)</h4>
+              <div id="cookie-s" class="min-h-24 flex flex-wrap justify-center items-start"></div>
+            </div>
+          </div>
+        </div>
+      `;
+      renderCookies(); // Papar keadaan awal (kosong)
+    }
+    
+    function addCookie(amount) {
+      const state = window.cookieFactoryState;
+      state.total += amount;
+      
+      // Logik kumpul semula
+      state.s = state.total % 10;
+      state.p = Math.floor((state.total % 100) / 10);
+      state.r = Math.floor(state.total / 100);
+
+      if (state.total > 999) {
+          setInfo("Kilang sudah penuh! (Had 999)");
+          state.total = 999; state.s = 9; state.p = 9; state.r = 9;
+          speak("Kilang penuh!");
+      }
+      
+      renderCookies();
+
+      // Maklum balas audio-visual
+      if (amount === 1 && state.s === 0) {
+        speak("Sepuluh! Kumpul jadi satu pek.");
+        document.getElementById('cookie-p').parentNode.classList.add('flash-regroup');
+        setTimeout(() => document.getElementById('cookie-p').parentNode.classList.remove('flash-regroup'), 800);
+      } else if (amount === 10 && state.p === 0) {
+        speak("Sepuluh pek! Kumpul jadi satu kotak.");
+        document.getElementById('cookie-r').parentNode.classList.add('flash-regroup');
+        setTimeout(() => document.getElementById('cookie-r').parentNode.classList.remove('flash-regroup'), 800);
+      }
+    }
+    
+    function resetCookies() {
+      window.cookieFactoryState = { s: 0, p: 0, r: 0, total: 0 };
+      renderCookies();
+      setInfo("Kilang dikosongkan. Jom mula semula!");
+      speak("Kosong.");
+    }
+
+    function renderCookies() {
+      const { s, p, r, total } = window.cookieFactoryState;
+      
+      document.getElementById('cookie-total').textContent = total;
+      document.getElementById('cookie-breakdown').textContent = `${r} Ratus + ${p} Puluh + ${s} Sa`;
+      
+      const r_div = document.getElementById('cookie-r');
+      r_div.innerHTML = '';
+      for (let i = 0; i < r; i++) r_div.innerHTML += '<div class="cookie-ratus" title="100">KOTAK</div>';
+      
+      const p_div = document.getElementById('cookie-p');
+      p_div.innerHTML = '';
+      for (let i = 0; i < p; i++) p_div.innerHTML += '<div class="cookie-puluh" title="10">PEK</div>';
+      
+      const s_div = document.getElementById('cookie-s');
+      s_div.innerHTML = '';
+      for (let i = 0; i < s; i++) s_div.innerHTML += '<div class="cookie-sa" title="1"></div>';
+    }
+
+
+    /* ====== Aktiviti 3: Penganalisis Nombor (m/s 75) ====== */
+    function loadPlaceValueExplorer(content) {
+      setInfo("Taip nombor antara 100 dan 999, kemudian tekan 'Analisis'.");
+      content.innerHTML = `
+        <h3 class="text-2xl font-bold text-purple-600 mb-6">✍️ Penganalisis Nombor</h3>
+        <div class="max-w-md mx-auto">
+          <div class="flex gap-2 mb-4">
+            <input type="number" id="pv-input" min="100" max="999" placeholder="Cth: 501"
+                   class="flex-grow w-full text-center text-3xl font-bold p-3 border-2 border-purple-300 rounded-lg focus:border-purple-500 outline-none">
+            <button id="pv-button" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-lg text-lg">Analisis</button>
+          </div>
+          <div id="pv-result" class="bg-purple-50 p-4 rounded-lg min-h-48">
+            <p class="text-gray-500 text-center p-8">Masukkan nombor untuk melihat pecahan nilai.</p>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('pv-button').addEventListener('click', () => {
+        const input = document.getElementById('pv-input');
+        const num = parseInt(input.value);
+        
+        if (isNaN(num) || num < 100 || num > 999) {
+          document.getElementById('pv-result').innerHTML = '<p class="text-red-500 text-center p-8">Sila masukkan nombor antara 100 dan 999.</p>';
+          input.classList.add('shake');
+          setTimeout(() => input.classList.remove('shake'), 500);
+          setInfo("Sila masukkan nombor antara 100 dan 999.");
+          return;
+        }
+        
+        const r = Math.floor(num / 100);
+        const p = Math.floor((num % 100) / 10);
+        const s = num % 10;
+        
+        document.getElementById('pv-result').innerHTML = `
+          <h4 class="text-xl font-bold text-purple-800 mb-3 text-center">Analisis untuk ${num}</h4>
+          <table class="w-full text-center border-collapse">
+            <thead class="bg-purple-100">
+              <tr>
+                <th class="p-2 border border-purple-300">Digit</th>
+                <th class="p-2 border border-purple-300">Nilai Tempat</th>
+                <th class="p-2 border border-purple-300">Nilai Digit</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="p-2 border border-purple-300 font-bold text-lg">${r}</td>
+                <td class="p-2 border border-purple-300">Ratus</td>
+                <td class="p-2 border border-purple-300">${r * 100}</td>
+              </tr>
+              <tr>
+                <td class="p-2 border border-purple-300 font-bold text-lg">${p}</td>
+                <td class="p-2 border border-purple-300">Puluh</td>
+                <td class="p-2 border border-purple-300">${p * 10}</td>
+              </tr>
+              <tr>
+                <td class="p-2 border border-purple-300 font-bold text-lg">${s}</td>
+                <td class="p-2 border border-purple-300">Sa</td>
+                <td class="p-2 border border-purple-300">${s}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="mt-4 text-center text-lg font-semibold text-purple-700">
+            Cerakin: ${num} = ${r * 100} + ${p * 10} + ${s}
+          </div>
+        `;
+        setInfo(`Analisis untuk ${num}. ${r} ratus, ${p} puluh, ${s} sa.`);
+      });
+    }
+
+    /* ====== Aktiviti 4: Kanta Nilai Digit ====== */
+    function loadDigitLens(content) {
+      setInfo("Klik 'Nombor Baru', kemudian guna kanta untuk lihat nilai setiap digit.");
+      content.innerHTML = `
+        <h3 class="text-2xl font-bold text-orange-600 mb-6">🔍 Kanta Nilai Digit</h3>
+        <div class="text-center">
+          <div class="mb-4">
+            <div class="text-sm text-gray-600">Nombor:</div>
+            <div id="lens-number" class="text-8xl font-black text-gray-800">...</div>
+          </div>
+          <div class="mb-6">
+            <div class="text-sm text-gray-600">Nilai Digit (Hasil Kanta):</div>
+            <div id="lens-result" class="text-6xl font-bold text-orange-700 min-h-20">?</div>
+          </div>
+          <div class="flex flex-wrap justify-center gap-3 mb-6">
+            <button onclick="useLens('r')" class="bg-orange-100 hover:bg-orange-200 border-2 border-orange-300 text-orange-800 font-bold py-3 px-5 rounded-lg text-lg">
+              🔍 Kanta Ratus
+            </button>
+            <button onclick="useLens('p')" class="bg-orange-100 hover:bg-orange-200 border-2 border-orange-300 text-orange-800 font-bold py-3 px-5 rounded-lg text-lg">
+              🔍 Kanta Puluh
+            </button>
+            <button onclick="useLens('s')" class="bg-orange-100 hover:bg-orange-200 border-2 border-orange-300 text-orange-800 font-bold py-3 px-5 rounded-lg text-lg">
+              🔍 Kanta Sa
+            </button>
+          </div>
+          <button onclick="newLensNumber()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-lg text-lg">
+            🔄 Nombor Baru
+          </button>
+        </div>
+      `;
+      newLensNumber();
+    }
+    let lensState = { num: 0, r: 0, p: 0, s: 0 };
+    function newLensNumber() {
+      const num = Math.floor(Math.random() * 900) + 100; // 100-999
+      lensState.num = num;
+      lensState.r = Math.floor(num / 100) * 100;
+      lensState.p = Math.floor((num % 100) / 10) * 10;
+      lensState.s = num % 10;
+      document.getElementById('lens-number').textContent = num;
+      document.getElementById('lens-result').textContent = '?';
+      setInfo(`Nombor baru: ${num}. Guna kanta untuk lihat nilai digit.`);
+    }
+    function useLens(type) {
+      let value, text;
+      if (type === 'r') { value = lensState.r; text = "Ratus"; }
+      if (type === 'p') { value = lensState.p; text = "Puluh"; }
+      if (type === 's') { value = lensState.s; text = "Sa"; }
+      document.getElementById('lens-result').textContent = value;
+      setInfo(`Nilai digit ${text} ialah ${value}.`);
+      speak(`Nilai ${text}, ${value}.`);
+    }
+
+    /* ====== Aktiviti 5: BINA SEBUTAN (100-1000) ====== */
+    function loadWordBuilder(content) {
+      setInfo("Rujuk sebutan di sebelah nombor. Klik token untuk bina semula sebutan.");
+
+      const ONES = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "lapan", "sembilan"];
+      const r = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+      function tokensFor(n) {
+        if (n === 1000) return ["seribu"];
+        let parts = [];
+        const r_val = Math.floor(n / 100);
+        const rem = n % 100;
+        
+        if (r_val === 1) parts.push("seratus");
+        else if (r_val > 1) parts.push(ONES[r_val], "ratus");
+        
+        if (rem === 0) { /* do nothing */ }
+        else if (rem < 10) parts.push(ONES[rem]);
+        else if (rem === 10) parts.push("sepuluh");
+        else if (rem === 11) parts.push("sebelas");
+        else if (rem < 20) parts.push(ONES[rem % 10], "belas");
+        else {
+          const p = Math.floor(rem / 10);
+          const s = rem % 10;
+          parts.push(ONES[p], "puluh");
+          if (s > 0) parts.push(ONES[s]);
+        }
+        return parts.filter(Boolean); // Tapis keluar "" jika ada
+      }
+      
+      const niceJoin = arr => arr.join(" ");
+      let target = r(100, 1000);
+      const correctTokens = tokensFor(target);
+      const correctPhrase = niceJoin(correctTokens);
+
+      const pool = new Set(correctTokens);
+      const EXTRA = ["ratus", "seratus", "puluh", "sepuluh", "belas", ...ONES.slice(1)];
+      while(pool.size < Math.min(10, EXTRA.length)) pool.add(EXTRA[r(0,EXTRA.length-1)]);
+      const bank = [...pool].sort(()=>Math.random()-0.5);
+
+      content.innerHTML = `
+        <h3 class="text-2xl font-bold text-red-600 mb-6">🎪 Bina Sebutan</h3>
+
+        <div class="bg-gray-50 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-3 mb-6">
+          <div class="text-center md:text-left">
+            <div class="text-xs uppercase tracking-wide text-gray-500">NOMBOR</div>
+            <div class="text-6xl md:text-7xl font-black text-gray-900 leading-none">${target}</div>
+          </div>
+          <div class="w-px h-14 bg-gray-200 hidden md:block"></div>
+          <div class="text-center md:text-left">
+            <div class="text-xs uppercase tracking-wide text-gray-500">Sebutan (rujukan)</div>
+            <div class="text-xl md:text-2xl font-bold text-red-700 flex items-center gap-3">
+              <span>${correctPhrase}</span>
+              <button class="rounded-full px-3 py-1 bg-red-100 text-red-700 font-semibold hover:bg-red-200"
+                      onclick="(function(){ if(window.speechSynthesis){ let u=new SpeechSynthesisUtterance('${correctPhrase}'); u.lang='ms-MY'; speechSynthesis.speak(u);} })()">
+                🔊 Sebut
+              </button>
+            </div>
+            <div class="text-sm text-gray-500 mt-1">Cuba bina semula sebutan yang sama menggunakan token.</div>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <div class="text-sm font-semibold text-gray-600 mb-1">Sebutan dibina:</div>
+          <div id="c-result" class="min-h-[3.2rem] flex flex-wrap gap-2 items-center bg-white rounded-xl border-2 border-gray-200 p-3"></div>
+        </div>
+
+        <div>
+          <div class="text-sm font-semibold text-gray-600 mb-1">Pilih perkataan:</div>
+          <div id="c-bank" class="flex flex-wrap gap-2">
+            ${bank.map(w=>`
+              <button class="number-card bg-red-50 border-2 border-red-200 px-4 py-2 text-lg font-semibold text-red-800 rounded-xl" data-token="${w}">${w}</button>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap gap-3 justify-center">
+          <button id="c-semakk" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl disabled:opacity-40" disabled>✅ Semak</button>
+          <button id="c-undo"  class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-3 rounded-xl">↩️ Undur</button>
+          <button id="c-clear" class="bg-rose-500 hover:bg-rose-600 text-white px-5 py-3 rounded-xl">🧹 Padam</button>
+          <button id="c-new"   class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl">🔄 Soalan Baharu</button>
+        </div>
+      `;
+
+      const bankEl   = document.getElementById('c-bank');
+      const resultEl = document.getElementById('c-result');
+      const btnSemak = document.getElementById('c-semakk');
+      let picked = [];
+      let history = [];
+
+      function render(){
+        resultEl.innerHTML = picked.map(w=>`<span class="px-3 py-1 rounded-xl bg-white border-2 border-gray-200">${w}</span>`).join('');
+        btnSemak.disabled = picked.length===0;
+      }
+
+      bankEl.querySelectorAll('button').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const w = btn.dataset.token;
+          picked.push(w);
+          history.push(btn);
+          btn.disabled = true;
+          btn.classList.add('opacity-60','token-on');
+          render();
+        });
+      });
+
+      btnSemak.addEventListener('click', ()=>{
+        const user = picked.join(" ");
+        resultEl.classList.remove('shake','result-good');
+        bankEl.querySelectorAll('button').forEach(b=>b.classList.remove('token-bad'));
+        if(user===correctPhrase){
+          resultEl.classList.add('result-good');
+          setInfo(`Bagus! ${target} disebut “${correctPhrase}”.`);
+          speak(`Bagus! Betul.`);
+        }else{
+          for(let i=0;i<picked.length;i++){
+            if(picked[i] !== (correctTokens[i] ?? "")){
+              if (history[i]) history[i].classList.add('token-bad');
+              break;
+            }
+          }
+          resultEl.classList.add('shake');
+          setInfo("Rujuk sebutan di atas dan susun semula mengikut urutan.");
+          speak("Belum tepat. Susun semula.");
+        }
+      });
+
+      document.getElementById('c-undo').addEventListener('click', ()=>{
+        const last = history.pop(); if(!last) return;
+        picked.pop(); last.disabled=false; last.classList.remove('opacity-60','token-on','token-bad'); render();
+      });
+      document.getElementById('c-clear').addEventListener('click', ()=>{
+        history.forEach(b=>{ b.disabled=false; b.classList.remove('opacity-60','token-on','token-bad'); });
+        picked=[]; history=[]; resultEl.classList.remove('result-good','shake'); render(); setInfo("Padam. Susun semula ikut sebutan rujukan.");
+      });
+      document.getElementById('c-new').addEventListener('click', ()=>loadWordBuilder(content));
+    }
+
+
+    /* ====== Kawalan Umum ====== */
+    function clearActivity() {
+      currentActivity = 0;
+      document.getElementById('activity-content').innerHTML = `
+        <div class="text-center py-16">
+          <div class="text-6xl mb-4">🔢</div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-4">Kemahiran Pemulihan: Nombor 100–1000</h2>
+          <p class="text-xl text-gray-600 mb-8">Pilih aktiviti di bawah untuk meneroka nilai nombor.</p>
+          <div class="text-4xl">👇</div>
+        </div>
+      `;
+      setInfo("Pilih aktiviti untuk mula belajar nombor!");
+    }
+    function nextActivity() {
+      if (currentActivity === 0) return loadActivity(1);
+      if (currentActivity < 5) return loadActivity(currentActivity + 1);
+      return loadActivity(1);
+    }
+
+    // Kekalkan TTS resume pada sesetengah pelayar
+    if ('speechSynthesis' in window) {
+      setInterval(() => { if (window.speechSynthesis.paused) window.speechSynthesis.resume(); }, 1000);
+    }
+  </script>
+</body>
+</html>
