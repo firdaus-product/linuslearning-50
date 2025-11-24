@@ -3,606 +3,569 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kemahiran Pemulihan: Nombor 100–1000 (Pembelajaran)</title>
+  <title>Kemahiran Pemulihan: Nombor 100-1000</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
-    body { box-sizing: border-box; }
-    .activity-card { min-height: 400px; }
-    .number-card { transition: all .3s ease; cursor: pointer; }
-    .number-card:hover { transform: scale(1.05); }
-
-    /* Animasi */
-    @keyframes shake {
-      0% { transform: translateX(0); } 25% { transform: translateX(-5px); }
-      50% { transform: translateX(5px); } 75% { transform: translateX(-5px); }
-      100% { transform: translateX(0); }
+    /* --- UI STYLE (TEMA HIJAU KONSISTEN) --- */
+    body { 
+        font-family: 'Fredoka', sans-serif; 
+        background-color: #f0fdf4; 
+        background-image: radial-gradient(#86efac 2px, transparent 2px); 
+        background-size: 30px 30px; 
     }
-    .shake { animation: shake 0.5s ease; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-    .pulse { animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    @keyframes flash-bg {
-      0% { background-color: #f0fdf4; }
-      50% { background-color: #bbf7d0; }
-      100% { background-color: #f0fdf4; }
-    }
-    .flash-regroup { animation: flash-bg 0.8s ease; }
-
-    /* Aktiviti 1: Blok */
-    .block-100 { width: 80px; height: 80px; background: #fecaca; border: 2px solid #ef4444; margin: 2px; }
-    .block-10 { width: 8px; height: 80px; background: #bfdbfe; border: 1px solid #3b82f6; margin: 2px; }
-    .block-1 { width: 8px; height: 8px; background: #bbf7d0; border: 1px solid #22c55e; margin: 2px; }
-
-    /* Aktiviti 2: Kilang Biskut */
-    .cookie-sa { width: 12px; height: 12px; background: #fbbf24; border: 2px solid #b45309; border-radius: 50%; margin: 2px; }
-    .cookie-puluh { width: 30px; height: 40px; background: #a5b4fc; border: 2px solid #4338ca; border-radius: 4px; margin: 3px; display:inline-flex; align-items:center; justify-content:center; font-size:10px; color: #4338ca; font-weight:bold; }
-    .cookie-ratus { width: 80px; height: 80px; background: #f9a8d4; border: 2px solid #be185d; border-radius: 8px; margin: 4px; display:inline-flex; align-items:center; justify-content:center; font-size:14px; color: #be185d; font-weight:bold; }
     
-    /* Aktiviti 5 */
-    .token-on { outline: 3px solid #A78BFA; }
-    .token-bad { outline: 3px solid #F87171; }
-    .result-good { background: #dcfce7; outline: 3px solid #22c55e; }
+    /* Card Container */
+    .game-card { 
+        background: white; 
+        border: 4px solid #475569; 
+        box-shadow: 8px 8px 0px #00000020; 
+        border-radius: 1.5rem; 
+        min-height: 550px; 
+        position: relative;
+    }
+    
+    /* Buttons 3D */
+    .btn-3d { 
+        transition: all 0.1s; 
+        border-bottom-width: 6px; 
+        border-color: rgba(0,0,0,0.2); 
+        transform: translateY(0); 
+        cursor: pointer; 
+        display: inline-block; 
+    }
+    .btn-3d:active:not(:disabled) { 
+        transform: translateY(4px); 
+        border-bottom-width: 2px; 
+        box-shadow: none; 
+    }
+    .btn-3d:disabled { opacity: 0.6; cursor: not-allowed; border-bottom-width: 6px; filter: grayscale(100%); }
+
+    /* Animations */
+    .shake { animation: shake 0.4s ease-in-out; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    
+    .pop-in { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    @keyframes flash-green { 0% { background-color: #dcfce7; } 50% { background-color: #86efac; } 100% { background-color: #dcfce7; } }
+    .flash-regroup { animation: flash-green 0.5s ease-out; }
+
+    /* --- STYLES KHUSUS AKTIVITI --- */
+    
+    /* Aktiviti 1: Blok */
+    .block-100 { width: 60px; height: 60px; background: #fca5a5; border: 3px solid #b91c1c; border-radius: 4px; margin: 2px; box-shadow: 2px 2px 0 #7f1d1d; }
+    .block-10 { width: 15px; height: 60px; background: #93c5fd; border: 2px solid #1e40af; border-radius: 2px; margin: 2px; box-shadow: 2px 2px 0 #1e3a8a; }
+    .block-1 { width: 15px; height: 15px; background: #86efac; border: 2px solid #15803d; border-radius: 50%; margin: 2px; box-shadow: 1px 1px 0 #14532d; }
+
+    /* Aktiviti 2: Biskut */
+    .cookie-ratus { width: 70px; height: 70px; background: #f9a8d4; border: 3px solid #be185d; border-radius: 8px; margin: 4px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#831843; font-weight:bold; box-shadow: 3px 3px 0 #831843; }
+    .cookie-puluh { width: 30px; height: 50px; background: #a5b4fc; border: 2px solid #4338ca; border-radius: 4px; margin: 3px; display:flex; align-items:center; justify-content:center; font-size:10px; color:#312e81; font-weight:bold; box-shadow: 2px 2px 0 #312e81; }
+    .cookie-sa { width: 16px; height: 16px; background: #fcd34d; border: 2px solid #b45309; border-radius: 50%; margin: 2px; box-shadow: 1px 1px 0 #78350f; }
+
+    /* Aktiviti 5: Token */
+    .token-btn { background: white; border: 2px solid #e2e8f0; border-radius: 0.8rem; padding: 0.5rem 1rem; font-weight: bold; color: #475569; transition: all 0.1s; border-bottom-width: 4px; }
+    .token-btn:active { border-bottom-width: 2px; transform: translateY(2px); }
+    .token-btn.selected { background: #e0f2fe; border-color: #0ea5e9; color: #0284c7; opacity: 0.5; }
+    .token-btn.wrong { background: #fee2e2; border-color: #ef4444; color: #b91c1c; animation: shake 0.4s; }
+
   </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-full">
+<body class="min-h-screen text-slate-800 pb-10">
 
-  <div class="bg-yellow-100 border-b-4 border-yellow-300 p-4 shadow-sm sticky top-0 z-10">
-    <div class="max-w-6xl mx-auto flex items-center justify-between">
+  <div class="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
+    <div class="max-w-4xl mx-auto bg-green-400 border-4 border-green-600 rounded-full px-6 py-3 shadow-xl flex items-center justify-between pointer-events-auto transform hover:scale-[1.01] transition-transform">
       <div class="flex items-center gap-3">
-        <span class="text-2xl">📚</span>
-        <span id="info-text" class="text-lg font-semibold text-gray-800">
-          Pilih aktiviti untuk mula belajar nombor!
-        </span>
+        <span class="text-3xl animate-bounce">🔢</span>
+        <span id="info-text" class="text-xl font-bold text-green-900 leading-none mt-1">Nombor 100-1000</span>
       </div>
-      <button id="speak-btn"
-              class="bg-yellow-300 hover:bg-yellow-400 text-yellow-800 font-bold py-2 px-4 rounded-full text-xl transition-colors duration-200"
-              onclick="speakInfo()">
-        🔊
-      </button>
+      <button id="speak-btn" onclick="speakInfo()" class="bg-white hover:bg-green-50 text-green-600 border-2 border-green-200 rounded-full p-2 transition-colors shadow-sm">🔊</button>
     </div>
   </div>
+  <div class="h-24"></div>
 
-  <div class="max-w-6xl mx-auto p-6">
-    <div class="bg-white rounded-xl shadow-lg p-6 mb-6 activity-card flex items-center justify-center">
-      <div id="activity-content" class="text-center w-full">
-        <div class="py-16">
-          <div class="text-6xl mb-4">🔢</div>
-          <h2 class="text-3xl font-bold text-gray-800 mb-4">
-            Kemahiran Pemulihan: Nombor 100–1000
-          </h2>
-          <p class="text-xl text-gray-600 mb-8">
-            Pilih aktiviti di bawah untuk meneroka nilai nombor.
-          </p>
-          <div class="text-4xl">👇</div>
+  <div class="max-w-5xl mx-auto p-4">
+    
+    <div class="game-card p-6 mb-8 flex items-center justify-center">
+        <div id="activity-content" class="w-full relative z-10">
+            <div class="py-10 text-center">
+                <div class="text-8xl mb-6 animate-pulse">💯</div>
+                <h2 class="text-5xl font-bold text-emerald-600 mb-4">Nombor 100 hingga 1000</h2>
+                <p class="text-2xl text-slate-500 mb-8 font-semibold">Kenali Nilai Tempat & Nilai Digit</p>
+                <div class="text-4xl animate-bounce">👇</div>
+            </div>
         </div>
-      </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-lg p-6">
-      <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Pilih Aktiviti</h3>
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-        <button onclick="loadActivity(1)"
-                class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
-          🎯 Pembina Blok
-        </button>
-        <button onclick="loadActivity(2)"
-                class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
-          📦 Kilang Biskut
-        </button>
-        <button onclick="loadActivity(3)"
-                class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
-          ✍️ Penganalisis Nombor
-        </button>
-        <button onclick="loadActivity(4)"
-                class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
-          🔍 Kanta Nilai Digit
-        </button>
-        <button onclick="loadActivity(5)"
-                class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-colors duration-200">
-          🎪 Bina Sebutan
-        </button>
+    <div class="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg p-6 border-2 border-white">
+      <h3 class="text-2xl font-bold text-slate-700 mb-4 text-center">🎮 Pilih Aktiviti</h3>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+        <button onclick="loadActivity(1)" class="btn-3d bg-blue-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🧱 Pembina Blok</button>
+        <button onclick="loadActivity(2)" class="btn-3d bg-emerald-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🍪 Kilang Biskut</button>
+        <button onclick="loadActivity(3)" class="btn-3d bg-violet-500 text-white font-bold py-4 px-2 rounded-xl text-lg">✍️ Analisis Nombor</button>
+        <button onclick="loadActivity(4)" class="btn-3d bg-orange-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🔍 Kanta Digit</button>
+        <button onclick="loadActivity(5)" class="btn-3d bg-rose-500 text-white font-bold py-4 px-2 rounded-xl text-lg">🗣️ Bina Sebutan</button>
       </div>
 
-      <div class="flex justify-center gap-4">
-        <button onclick="clearActivity()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-6 rounded-lg text-lg transition-colors duration-200">
-          🧹 Bersih
-        </button>
-        <button onclick="nextActivity()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-6 rounded-lg text-lg transition-colors duration-200">
-          ➡️ Seterusnya
-        </button>
+      <div class="flex justify-center gap-4 border-t-2 border-slate-100 pt-6">
+        <button onclick="clearActivity()" class="btn-3d bg-slate-400 text-white font-bold py-2 px-6 rounded-full text-lg">🏠 Menu</button>
+        <button onclick="nextActivity()" class="btn-3d bg-indigo-500 text-white font-bold py-2 px-8 rounded-full text-xl">Seterusnya ➡️</button>
       </div>
     </div>
   </div>
 
   <script>
+    /* --- STANDARD HELPERS --- */
     let currentActivity = 0;
     let ttsEnabled = false;
-    let currentInfo = "Pilih aktiviti untuk mula belajar nombor!";
+    let currentInfo = "Pilih aktiviti untuk mula.";
+    const r = (min,max) => Math.floor(Math.random()*(max-min+1))+min;
+
+    function triggerWin() { confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } }); }
     
-    // State untuk aktiviti
-    window.blockBuilderState = { r: 0, p: 0, s: 0, total: 0 };
-    window.cookieFactoryState = { s: 0, p: 0, r: 0, total: 0 };
-
-    /* ====== TTS ====== */
-    function speak(text) {
-      if (!ttsEnabled) return;
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      setTimeout(() => {
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'ms-MY';
-        u.rate = 0.9; u.pitch = 1.05;
-        const voices = window.speechSynthesis.getVoices();
-        const ms = voices.find(v => v.lang === 'ms-MY' || v.lang?.startsWith('ms'));
-        if (ms) u.voice = ms;
-        window.speechSynthesis.speak(u);
-      }, 100);
+    function speak(text) { 
+        if (!ttsEnabled || !('speechSynthesis' in window)) return; 
+        window.speechSynthesis.cancel(); 
+        const u = new SpeechSynthesisUtterance(text); 
+        u.lang = 'ms-MY'; u.rate = 0.9; u.pitch = 1.1; 
+        const voices = window.speechSynthesis.getVoices(); 
+        const ms = voices.find(v => v.lang === 'ms-MY' || v.lang?.startsWith('ms')); 
+        if (ms) u.voice = ms; 
+        window.speechSynthesis.speak(u); 
     }
-    function setInfo(text) { currentInfo = text; document.getElementById('info-text').textContent = text; }
-    function speakInfo() {
-      if (!ttsEnabled) {
-        ttsEnabled = true;
-        const btn = document.getElementById('speak-btn');
-        btn.classList.add('bg-green-300', 'hover:bg-green-400');
-        btn.classList.remove('bg-yellow-300', 'hover:bg-yellow-400');
-      }
-      speak(currentInfo);
+    
+    function setInfo(text) { 
+        currentInfo = text; 
+        const infoEl = document.getElementById('info-text'); 
+        infoEl.style.opacity = 0; 
+        setTimeout(() => { infoEl.textContent = text; infoEl.style.opacity = 1; }, 200); 
+    }
+    
+    function speakInfo() { 
+        if (!ttsEnabled) { 
+            ttsEnabled = true; 
+            document.getElementById('speak-btn').classList.add('bg-green-100', 'text-green-600'); 
+        } 
+        speak(currentInfo); 
     }
 
-    /* ====== Router ====== */
+    /* --- ROUTER --- */
     function loadActivity(n) {
       currentActivity = n;
       const content = document.getElementById('activity-content');
-      if (n === 1) return loadBlockBuilder(content);
-      if (n === 2) return loadCookieFactory(content);
-      if (n === 3) return loadPlaceValueExplorer(content);
-      if (n === 4) return loadDigitLens(content);
-      if (n === 5) return loadWordBuilder(content);
+      content.style.opacity = 0;
+      setTimeout(() => {
+          if (n === 1) loadBlockBuilder(content);
+          if (n === 2) loadCookieFactory(content);
+          if (n === 3) loadPlaceValueExplorer(content);
+          if (n === 4) loadDigitLens(content);
+          if (n === 5) loadWordBuilder(content);
+          content.style.opacity = 1;
+      }, 200);
     }
 
-    /* ====== Aktiviti 1: Pembina Blok (m/s 71-72) ====== */
+    function clearActivity() {
+        currentActivity = 0;
+        document.getElementById('activity-content').innerHTML = `<div class="py-10 text-center"><div class="text-8xl mb-6 animate-bounce">💯</div><h2 class="text-5xl font-bold text-emerald-600 mb-4">Nombor 100-1000</h2><p class="text-2xl text-slate-500 mb-8 font-semibold">Pilih butang di bawah.</p></div>`;
+        setInfo("Pilih aktiviti untuk mula.");
+    }
+    function nextActivity() { let next = currentActivity + 1; if (next > 5) next = 1; loadActivity(next); }
+
+
+    /* =========================================
+       AKTIVITI 1: Pembina Blok (100, 10, 1)
+       ========================================= */
+    let bbState = { r:0, p:0, s:0, total:0 };
+
     function loadBlockBuilder(content) {
-      setInfo("Klik butang '+100', '+10', atau '+1' untuk menambah blok dan lihat jumlahnya.");
-      window.blockBuilderState = { r: 0, p: 0, s: 0, total: 0 };
-      content.innerHTML = `
-        <h3 class="text-2xl font-bold text-blue-600 mb-4">🎯 Pembina Blok</h3>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div class="lg:col-span-1 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
-            <div class="text-xl font-semibold mb-3">Kawalan:</div>
-            <div class="flex flex-col gap-3">
-              <button onclick="addBlock(100)" class="w-full bg-red-400 hover:bg-red-500 text-white font-bold py-3 px-4 rounded-lg text-lg">+1 Ratus</button>
-              <button onclick="addBlock(10)" class="w-full bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-lg">+1 Puluh</button>
-              <button onclick="addBlock(1)" class="w-full bg-green-400 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-lg text-lg">+1 Unit</button>
+        bbState = { r:0, p:0, s:0, total:0 };
+        setInfo("Tambah blok untuk bina nombor.");
+
+        content.innerHTML = `
+            <h3 class="text-4xl font-bold text-blue-500 mb-4 text-center">🧱 Pembina Blok</h3>
+            
+            <div class="flex flex-col md:flex-row gap-4 h-full">
+                <div class="w-full md:w-1/3 bg-blue-50 p-4 rounded-2xl border-2 border-blue-200 flex flex-col justify-center gap-3">
+                    <button onclick="addBlock(100)" class="btn-3d bg-rose-400 text-white font-bold py-3 rounded-xl text-xl w-full">+100 (Ratus)</button>
+                    <button onclick="addBlock(10)" class="btn-3d bg-blue-400 text-white font-bold py-3 rounded-xl text-xl w-full">+10 (Puluh)</button>
+                    <button onclick="addBlock(1)" class="btn-3d bg-emerald-400 text-white font-bold py-3 rounded-xl text-xl w-full">+1 (Sa)</button>
+                    <div class="h-4"></div>
+                    <button onclick="loadBlockBuilder(document.getElementById('activity-content'))" class="btn-3d bg-slate-400 text-white font-bold py-2 rounded-xl text-lg w-full">Set Semula</button>
+                </div>
+
+                <div class="w-full md:w-2/3 bg-white p-4 rounded-2xl border-2 border-slate-200 relative">
+                    <div class="absolute top-4 right-4 text-right">
+                        <div class="text-sm font-bold text-slate-400 uppercase">Jumlah</div>
+                        <div id="bb-total" class="text-5xl font-black text-blue-600">0</div>
+                    </div>
+                    <div id="bb-breakdown" class="text-lg font-bold text-slate-500 mb-4">0 Ratus + 0 Puluh + 0 Sa</div>
+                    
+                    <div id="bb-container" class="flex flex-wrap content-start gap-1 p-2 bg-slate-50 rounded-xl min-h-[300px] overflow-y-auto">
+                        </div>
+                </div>
             </div>
-            <div class="border-t-2 border-blue-200 my-4"></div>
-            <button onclick="resetBlocks()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">🧹 Set Semula</button>
-          </div>
-          
-          <div class="lg:col-span-2 p-4 bg-gray-50 rounded-lg border-2 border-gray-200">
-            <div class="mb-4">
-              <div class="text-sm font-semibold text-gray-600">Jumlah:</div>
-              <div id="block-total" class="text-6xl font-bold text-blue-800">0</div>
-              <div id="block-breakdown" class="text-lg text-gray-700 font-semibold">&nbsp;</div>
-            </div>
-            <div id="block-display" class="min-h-48 flex flex-wrap items-start p-2 bg-white border rounded-md">
-              </div>
-          </div>
-        </div>
-      `;
-    }
-    function addBlock(type) {
-      const state = window.blockBuilderState;
-      if (type === 100 && state.r < 9) state.r++;
-      else if (type === 10 && state.p < 9) state.p++;
-      else if (type === 1 && state.s < 9) state.s++;
-      else { setInfo("Had 9 untuk setiap jenis blok."); speak("Had 9"); return; }
-      renderBlocks();
-    }
-    function resetBlocks() {
-      window.blockBuilderState = { r: 0, p: 0, s: 0, total: 0 };
-      renderBlocks();
-    }
-    function renderBlocks() {
-      const { r, p, s } = window.blockBuilderState;
-      const display = document.getElementById('block-display');
-      display.innerHTML = '';
-      for (let i = 0; i < r; i++) display.innerHTML += '<div class="block-100" title="100"></div>';
-      for (let i = 0; i < p; i++) display.innerHTML += '<div class="block-10" title="10"></div>';
-      for (let i = 0; i < s; i++) display.innerHTML += '<div class="block-1" title="1"></div>';
-      
-      const total = r * 100 + p * 10 + s;
-      window.blockBuilderState.total = total;
-      document.getElementById('block-total').textContent = total;
-      
-      const breakdown = `${r} Ratus + ${p} Puluh + ${s} Sa`;
-      document.getElementById('block-breakdown').textContent = breakdown;
-      
-      setInfo(`Jumlah: ${total}. ${breakdown}.`);
+        `;
     }
 
-    /* ====== Aktiviti 2: Kilang Biskut (BARU) ====== */
+    function addBlock(val) {
+        if ((val===100 && bbState.r>=9) || (val===10 && bbState.p>=9) || (val===1 && bbState.s>=9)) {
+            speak("Maksimum sembilan."); return;
+        }
+        
+        if(val===100) bbState.r++;
+        if(val===10) bbState.p++;
+        if(val===1) bbState.s++;
+        
+        bbState.total = (bbState.r*100) + (bbState.p*10) + bbState.s;
+        updateBB();
+    }
+
+    function updateBB() {
+        document.getElementById('bb-total').textContent = bbState.total;
+        document.getElementById('bb-breakdown').textContent = `${bbState.r} Ratus + ${bbState.p} Puluh + ${bbState.s} Sa`;
+        
+        const con = document.getElementById('bb-container');
+        con.innerHTML = '';
+        
+        for(let i=0; i<bbState.r; i++) con.innerHTML += `<div class="block-100 pop-in"></div>`;
+        for(let i=0; i<bbState.p; i++) con.innerHTML += `<div class="block-10 pop-in"></div>`;
+        for(let i=0; i<bbState.s; i++) con.innerHTML += `<div class="block-1 pop-in"></div>`;
+    }
+
+    /* =========================================
+       AKTIVITI 2: Kilang Biskut (Regrouping)
+       ========================================= */
+    let cfState = { r:0, p:0, s:0, total:0 };
+
     function loadCookieFactory(content) {
-      setInfo("Klik '+1 Biskut' untuk menambah. Lihat apa jadi bila cukup 10!");
-      window.cookieFactoryState = { s: 0, p: 0, r: 0, total: 0 };
-      content.innerHTML = `
-        <h3 class="text-2xl font-bold text-green-600 mb-4">📦 Kilang Biskut</h3>
-        <div class="bg-gray-50 rounded-2xl p-6">
-          <div class="text-center mb-6">
-            <div class="text-sm text-gray-600">Jumlah Biskut:</div>
-            <div id="cookie-total" class="text-6xl font-bold text-green-800">0</div>
-            <div id="cookie-breakdown" class="text-lg text-gray-700 font-semibold">&nbsp;</div>
-          </div>
-          
-          <div class="flex justify-center gap-4 mb-6">
-            <button onclick="addCookie(1)" class="bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg text-lg">
-              +1 Biskut
-            </button>
-            <button onclick="addCookie(10)" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-lg text-lg">
-              +1 Pek (10)
-            </button>
-            <button onclick="resetCookies()" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-lg text-lg">
-              🧹 Set Semula
-            </button>
-          </div>
+        cfState = { r:0, p:0, s:0, total:0 };
+        setInfo("Tambah biskut. Cukup 10, ia akan dibungkus!");
 
-          <div class="grid grid-cols-3 gap-4 text-center">
-            <div class="bg-pink-100 p-4 rounded-lg border-2 border-pink-300">
-              <h4 class="font-bold text-pink-700 mb-2">Kotak (Ratus)</h4>
-              <div id="cookie-r" class="min-h-24 flex flex-wrap justify-center items-start"></div>
+        content.innerHTML = `
+            <h3 class="text-4xl font-bold text-emerald-600 mb-4 text-center">🍪 Kilang Biskut</h3>
+            
+            <div class="flex flex-col items-center">
+                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-full px-8 py-2 mb-6 text-center">
+                    <span class="text-sm font-bold text-emerald-600 uppercase">Jumlah Biskut</span>
+                    <div id="cf-total" class="text-4xl font-black text-emerald-800">0</div>
+                </div>
+
+                <div class="flex gap-4 mb-6">
+                     <button onclick="addCookie(1)" class="btn-3d bg-amber-400 text-white font-bold py-3 px-6 rounded-xl text-xl">+1 Biskut</button>
+                     <button onclick="addCookie(10)" class="btn-3d bg-blue-400 text-white font-bold py-3 px-6 rounded-xl text-xl">+10 (1 Pek)</button>
+                     <button onclick="loadCookieFactory(document.getElementById('activity-content'))" class="btn-3d bg-slate-400 text-white font-bold py-3 px-6 rounded-xl text-xl">Reset</button>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 w-full max-w-3xl">
+                    <div id="box-r" class="bg-pink-50 border-4 border-pink-200 rounded-2xl p-3 min-h-[200px] text-center transition-colors">
+                        <div class="font-bold text-pink-700 mb-2">KOTAK (Ratus)</div>
+                        <div id="cf-r" class="flex flex-wrap justify-center gap-1"></div>
+                    </div>
+                    <div id="box-p" class="bg-blue-50 border-4 border-blue-200 rounded-2xl p-3 min-h-[200px] text-center transition-colors">
+                        <div class="font-bold text-blue-700 mb-2">PEK (Puluh)</div>
+                        <div id="cf-p" class="flex flex-wrap justify-center gap-1"></div>
+                    </div>
+                    <div id="box-s" class="bg-amber-50 border-4 border-amber-200 rounded-2xl p-3 min-h-[200px] text-center transition-colors">
+                        <div class="font-bold text-amber-700 mb-2">BISKUT (Sa)</div>
+                        <div id="cf-s" class="flex flex-wrap justify-center gap-1"></div>
+                    </div>
+                </div>
             </div>
-            <div class="bg-blue-100 p-4 rounded-lg border-2 border-blue-300">
-              <h4 class="font-bold text-blue-700 mb-2">Pek (Puluh)</h4>
-              <div id="cookie-p" class="min-h-24 flex flex-wrap justify-center items-start"></div>
-            </div>
-            <div class="bg-yellow-100 p-4 rounded-lg border-2 border-yellow-300">
-              <h4 class="font-bold text-yellow-700 mb-2">Biskut (Sa)</h4>
-              <div id="cookie-s" class="min-h-24 flex flex-wrap justify-center items-start"></div>
-            </div>
-          </div>
-        </div>
-      `;
-      renderCookies(); // Papar keadaan awal (kosong)
+        `;
     }
-    
-    function addCookie(amount) {
-      const state = window.cookieFactoryState;
-      state.total += amount;
-      
-      // Logik kumpul semula
-      state.s = state.total % 10;
-      state.p = Math.floor((state.total % 100) / 10);
-      state.r = Math.floor(state.total / 100);
 
-      if (state.total > 999) {
-          setInfo("Kilang sudah penuh! (Had 999)");
-          state.total = 999; state.s = 9; state.p = 9; state.r = 9;
-          speak("Kilang penuh!");
-      }
-      
-      renderCookies();
+    function addCookie(n) {
+        cfState.total += n;
+        if(cfState.total > 999) { cfState.total = 999; speak("Kilang penuh!"); }
 
-      // Maklum balas audio-visual
-      if (amount === 1 && state.s === 0) {
-        speak("Sepuluh! Kumpul jadi satu pek.");
-        document.getElementById('cookie-p').parentNode.classList.add('flash-regroup');
-        setTimeout(() => document.getElementById('cookie-p').parentNode.classList.remove('flash-regroup'), 800);
-      } else if (amount === 10 && state.p === 0) {
-        speak("Sepuluh pek! Kumpul jadi satu kotak.");
-        document.getElementById('cookie-r').parentNode.classList.add('flash-regroup');
-        setTimeout(() => document.getElementById('cookie-r').parentNode.classList.remove('flash-regroup'), 800);
-      }
+        // Calculate
+        const oldP = cfState.p;
+        const oldR = cfState.r;
+
+        cfState.s = cfState.total % 10;
+        cfState.p = Math.floor((cfState.total % 100) / 10);
+        cfState.r = Math.floor(cfState.total / 100);
+
+        // Check regrouping for animation
+        if (n===1 && cfState.s === 0) flashBox('box-p');
+        if (n===10 && cfState.p === 0) flashBox('box-r');
+
+        renderCookies();
     }
-    
-    function resetCookies() {
-      window.cookieFactoryState = { s: 0, p: 0, r: 0, total: 0 };
-      renderCookies();
-      setInfo("Kilang dikosongkan. Jom mula semula!");
-      speak("Kosong.");
+
+    function flashBox(id) {
+        const el = document.getElementById(id);
+        el.classList.add('flash-regroup');
+        setTimeout(()=>el.classList.remove('flash-regroup'), 500);
+        speak("Bungkus!");
     }
 
     function renderCookies() {
-      const { s, p, r, total } = window.cookieFactoryState;
-      
-      document.getElementById('cookie-total').textContent = total;
-      document.getElementById('cookie-breakdown').textContent = `${r} Ratus + ${p} Puluh + ${s} Sa`;
-      
-      const r_div = document.getElementById('cookie-r');
-      r_div.innerHTML = '';
-      for (let i = 0; i < r; i++) r_div.innerHTML += '<div class="cookie-ratus" title="100">KOTAK</div>';
-      
-      const p_div = document.getElementById('cookie-p');
-      p_div.innerHTML = '';
-      for (let i = 0; i < p; i++) p_div.innerHTML += '<div class="cookie-puluh" title="10">PEK</div>';
-      
-      const s_div = document.getElementById('cookie-s');
-      s_div.innerHTML = '';
-      for (let i = 0; i < s; i++) s_div.innerHTML += '<div class="cookie-sa" title="1"></div>';
+        document.getElementById('cf-total').textContent = cfState.total;
+        
+        const divR = document.getElementById('cf-r'); divR.innerHTML = '';
+        const divP = document.getElementById('cf-p'); divP.innerHTML = '';
+        const divS = document.getElementById('cf-s'); divS.innerHTML = '';
+
+        for(let i=0; i<cfState.r; i++) divR.innerHTML += `<div class="cookie-ratus pop-in">100</div>`;
+        for(let i=0; i<cfState.p; i++) divP.innerHTML += `<div class="cookie-puluh pop-in">10</div>`;
+        for(let i=0; i<cfState.s; i++) divS.innerHTML += `<div class="cookie-sa pop-in"></div>`;
     }
 
-
-    /* ====== Aktiviti 3: Penganalisis Nombor (m/s 75) ====== */
+    /* =========================================
+       AKTIVITI 3: Analisis Nombor (Nilai Tempat)
+       ========================================= */
     function loadPlaceValueExplorer(content) {
-      setInfo("Taip nombor antara 100 dan 999, kemudian tekan 'Analisis'.");
-      content.innerHTML = `
-        <h3 class="text-2xl font-bold text-purple-600 mb-6">✍️ Penganalisis Nombor</h3>
-        <div class="max-w-md mx-auto">
-          <div class="flex gap-2 mb-4">
-            <input type="number" id="pv-input" min="100" max="999" placeholder="Cth: 501"
-                   class="flex-grow w-full text-center text-3xl font-bold p-3 border-2 border-purple-300 rounded-lg focus:border-purple-500 outline-none">
-            <button id="pv-button" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-lg text-lg">Analisis</button>
-          </div>
-          <div id="pv-result" class="bg-purple-50 p-4 rounded-lg min-h-48">
-            <p class="text-gray-500 text-center p-8">Masukkan nombor untuk melihat pecahan nilai.</p>
-          </div>
-        </div>
-      `;
-      
-      document.getElementById('pv-button').addEventListener('click', () => {
-        const input = document.getElementById('pv-input');
-        const num = parseInt(input.value);
-        
-        if (isNaN(num) || num < 100 || num > 999) {
-          document.getElementById('pv-result').innerHTML = '<p class="text-red-500 text-center p-8">Sila masukkan nombor antara 100 dan 999.</p>';
-          input.classList.add('shake');
-          setTimeout(() => input.classList.remove('shake'), 500);
-          setInfo("Sila masukkan nombor antara 100 dan 999.");
-          return;
-        }
-        
-        const r = Math.floor(num / 100);
-        const p = Math.floor((num % 100) / 10);
-        const s = num % 10;
-        
-        document.getElementById('pv-result').innerHTML = `
-          <h4 class="text-xl font-bold text-purple-800 mb-3 text-center">Analisis untuk ${num}</h4>
-          <table class="w-full text-center border-collapse">
-            <thead class="bg-purple-100">
-              <tr>
-                <th class="p-2 border border-purple-300">Digit</th>
-                <th class="p-2 border border-purple-300">Nilai Tempat</th>
-                <th class="p-2 border border-purple-300">Nilai Digit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td class="p-2 border border-purple-300 font-bold text-lg">${r}</td>
-                <td class="p-2 border border-purple-300">Ratus</td>
-                <td class="p-2 border border-purple-300">${r * 100}</td>
-              </tr>
-              <tr>
-                <td class="p-2 border border-purple-300 font-bold text-lg">${p}</td>
-                <td class="p-2 border border-purple-300">Puluh</td>
-                <td class="p-2 border border-purple-300">${p * 10}</td>
-              </tr>
-              <tr>
-                <td class="p-2 border border-purple-300 font-bold text-lg">${s}</td>
-                <td class="p-2 border border-purple-300">Sa</td>
-                <td class="p-2 border border-purple-300">${s}</td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="mt-4 text-center text-lg font-semibold text-purple-700">
-            Cerakin: ${num} = ${r * 100} + ${p * 10} + ${s}
-          </div>
-        `;
-        setInfo(`Analisis untuk ${num}. ${r} ratus, ${p} puluh, ${s} sa.`);
-      });
-    }
+        setInfo("Masukkan nombor untuk lihat cerakinan.");
 
-    /* ====== Aktiviti 4: Kanta Nilai Digit ====== */
-    function loadDigitLens(content) {
-      setInfo("Klik 'Nombor Baru', kemudian guna kanta untuk lihat nilai setiap digit.");
-      content.innerHTML = `
-        <h3 class="text-2xl font-bold text-orange-600 mb-6">🔍 Kanta Nilai Digit</h3>
-        <div class="text-center">
-          <div class="mb-4">
-            <div class="text-sm text-gray-600">Nombor:</div>
-            <div id="lens-number" class="text-8xl font-black text-gray-800">...</div>
-          </div>
-          <div class="mb-6">
-            <div class="text-sm text-gray-600">Nilai Digit (Hasil Kanta):</div>
-            <div id="lens-result" class="text-6xl font-bold text-orange-700 min-h-20">?</div>
-          </div>
-          <div class="flex flex-wrap justify-center gap-3 mb-6">
-            <button onclick="useLens('r')" class="bg-orange-100 hover:bg-orange-200 border-2 border-orange-300 text-orange-800 font-bold py-3 px-5 rounded-lg text-lg">
-              🔍 Kanta Ratus
-            </button>
-            <button onclick="useLens('p')" class="bg-orange-100 hover:bg-orange-200 border-2 border-orange-300 text-orange-800 font-bold py-3 px-5 rounded-lg text-lg">
-              🔍 Kanta Puluh
-            </button>
-            <button onclick="useLens('s')" class="bg-orange-100 hover:bg-orange-200 border-2 border-orange-300 text-orange-800 font-bold py-3 px-5 rounded-lg text-lg">
-              🔍 Kanta Sa
-            </button>
-          </div>
-          <button onclick="newLensNumber()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-6 rounded-lg text-lg">
-            🔄 Nombor Baru
-          </button>
-        </div>
-      `;
-      newLensNumber();
-    }
-    let lensState = { num: 0, r: 0, p: 0, s: 0 };
-    function newLensNumber() {
-      const num = Math.floor(Math.random() * 900) + 100; // 100-999
-      lensState.num = num;
-      lensState.r = Math.floor(num / 100) * 100;
-      lensState.p = Math.floor((num % 100) / 10) * 10;
-      lensState.s = num % 10;
-      document.getElementById('lens-number').textContent = num;
-      document.getElementById('lens-result').textContent = '?';
-      setInfo(`Nombor baru: ${num}. Guna kanta untuk lihat nilai digit.`);
-    }
-    function useLens(type) {
-      let value, text;
-      if (type === 'r') { value = lensState.r; text = "Ratus"; }
-      if (type === 'p') { value = lensState.p; text = "Puluh"; }
-      if (type === 's') { value = lensState.s; text = "Sa"; }
-      document.getElementById('lens-result').textContent = value;
-      setInfo(`Nilai digit ${text} ialah ${value}.`);
-      speak(`Nilai ${text}, ${value}.`);
-    }
+        content.innerHTML = `
+            <h3 class="text-4xl font-bold text-violet-500 mb-6 text-center">✍️ Analisis Nombor</h3>
+            
+            <div class="max-w-lg mx-auto bg-white p-6 rounded-3xl border-2 border-violet-100 shadow-lg">
+                <div class="flex gap-3 mb-6">
+                    <input id="an-input" type="number" min="100" max="999" class="w-full border-4 border-violet-300 rounded-xl text-center text-3xl font-bold p-2 focus:border-violet-500 outline-none" placeholder="123">
+                    <button onclick="analyzeNum()" class="btn-3d bg-violet-500 text-white font-bold py-2 px-6 rounded-xl text-xl">Analisis</button>
+                </div>
 
-    /* ====== Aktiviti 5: BINA SEBUTAN (100-1000) ====== */
-    function loadWordBuilder(content) {
-      setInfo("Rujuk sebutan di sebelah nombor. Klik token untuk bina semula sebutan.");
+                <div id="an-result" class="hidden space-y-4">
+                     <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-pink-100 p-3 rounded-lg border border-pink-300">
+                            <div class="text-xs font-bold text-pink-600 uppercase">Ratus</div>
+                            <div id="val-r" class="text-4xl font-black text-pink-800">0</div>
+                            <div id="digit-r" class="text-sm text-pink-700">Nilai: 0</div>
+                        </div>
+                        <div class="bg-blue-100 p-3 rounded-lg border border-blue-300">
+                            <div class="text-xs font-bold text-blue-600 uppercase">Puluh</div>
+                            <div id="val-p" class="text-4xl font-black text-blue-800">0</div>
+                            <div id="digit-p" class="text-sm text-blue-700">Nilai: 0</div>
+                        </div>
+                        <div class="bg-emerald-100 p-3 rounded-lg border border-emerald-300">
+                            <div class="text-xs font-bold text-emerald-600 uppercase">Sa</div>
+                            <div id="val-s" class="text-4xl font-black text-emerald-800">0</div>
+                            <div id="digit-s" class="text-sm text-emerald-700">Nilai: 0</div>
+                        </div>
+                     </div>
 
-      const ONES = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "lapan", "sembilan"];
-      const r = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-      function tokensFor(n) {
-        if (n === 1000) return ["seribu"];
-        let parts = [];
-        const r_val = Math.floor(n / 100);
-        const rem = n % 100;
-        
-        if (r_val === 1) parts.push("seratus");
-        else if (r_val > 1) parts.push(ONES[r_val], "ratus");
-        
-        if (rem === 0) { /* do nothing */ }
-        else if (rem < 10) parts.push(ONES[rem]);
-        else if (rem === 10) parts.push("sepuluh");
-        else if (rem === 11) parts.push("sebelas");
-        else if (rem < 20) parts.push(ONES[rem % 10], "belas");
-        else {
-          const p = Math.floor(rem / 10);
-          const s = rem % 10;
-          parts.push(ONES[p], "puluh");
-          if (s > 0) parts.push(ONES[s]);
-        }
-        return parts.filter(Boolean); // Tapis keluar "" jika ada
-      }
-      
-      const niceJoin = arr => arr.join(" ");
-      let target = r(100, 1000);
-      const correctTokens = tokensFor(target);
-      const correctPhrase = niceJoin(correctTokens);
-
-      const pool = new Set(correctTokens);
-      const EXTRA = ["ratus", "seratus", "puluh", "sepuluh", "belas", ...ONES.slice(1)];
-      while(pool.size < Math.min(10, EXTRA.length)) pool.add(EXTRA[r(0,EXTRA.length-1)]);
-      const bank = [...pool].sort(()=>Math.random()-0.5);
-
-      content.innerHTML = `
-        <h3 class="text-2xl font-bold text-red-600 mb-6">🎪 Bina Sebutan</h3>
-
-        <div class="bg-gray-50 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-3 mb-6">
-          <div class="text-center md:text-left">
-            <div class="text-xs uppercase tracking-wide text-gray-500">NOMBOR</div>
-            <div class="text-6xl md:text-7xl font-black text-gray-900 leading-none">${target}</div>
-          </div>
-          <div class="w-px h-14 bg-gray-200 hidden md:block"></div>
-          <div class="text-center md:text-left">
-            <div class="text-xs uppercase tracking-wide text-gray-500">Sebutan (rujukan)</div>
-            <div class="text-xl md:text-2xl font-bold text-red-700 flex items-center gap-3">
-              <span>${correctPhrase}</span>
-              <button class="rounded-full px-3 py-1 bg-red-100 text-red-700 font-semibold hover:bg-red-200"
-                      onclick="(function(){ if(window.speechSynthesis){ let u=new SpeechSynthesisUtterance('${correctPhrase}'); u.lang='ms-MY'; speechSynthesis.speak(u);} })()">
-                🔊 Sebut
-              </button>
+                     <div class="bg-slate-50 p-4 rounded-xl text-center border-2 border-slate-200">
+                        <div class="text-sm text-slate-500 font-bold uppercase mb-1">Cerakin Nilai Digit</div>
+                        <div id="cerakin-text" class="text-2xl font-bold text-slate-700"></div>
+                     </div>
+                </div>
             </div>
-            <div class="text-sm text-gray-500 mt-1">Cuba bina semula sebutan yang sama menggunakan token.</div>
-          </div>
-        </div>
+        `;
+    }
 
-        <div class="mb-4">
-          <div class="text-sm font-semibold text-gray-600 mb-1">Sebutan dibina:</div>
-          <div id="c-result" class="min-h-[3.2rem] flex flex-wrap gap-2 items-center bg-white rounded-xl border-2 border-gray-200 p-3"></div>
-        </div>
-
-        <div>
-          <div class="text-sm font-semibold text-gray-600 mb-1">Pilih perkataan:</div>
-          <div id="c-bank" class="flex flex-wrap gap-2">
-            ${bank.map(w=>`
-              <button class="number-card bg-red-50 border-2 border-red-200 px-4 py-2 text-lg font-semibold text-red-800 rounded-xl" data-token="${w}">${w}</button>
-            `).join('')}
-          </div>
-        </div>
-
-        <div class="mt-6 flex flex-wrap gap-3 justify-center">
-          <button id="c-semakk" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-3 rounded-xl disabled:opacity-40" disabled>✅ Semak</button>
-          <button id="c-undo"  class="bg-gray-500 hover:bg-gray-600 text-white px-5 py-3 rounded-xl">↩️ Undur</button>
-          <button id="c-clear" class="bg-rose-500 hover:bg-rose-600 text-white px-5 py-3 rounded-xl">🧹 Padam</button>
-          <button id="c-new"   class="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl">🔄 Soalan Baharu</button>
-        </div>
-      `;
-
-      const bankEl   = document.getElementById('c-bank');
-      const resultEl = document.getElementById('c-result');
-      const btnSemak = document.getElementById('c-semakk');
-      let picked = [];
-      let history = [];
-
-      function render(){
-        resultEl.innerHTML = picked.map(w=>`<span class="px-3 py-1 rounded-xl bg-white border-2 border-gray-200">${w}</span>`).join('');
-        btnSemak.disabled = picked.length===0;
-      }
-
-      bankEl.querySelectorAll('button').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const w = btn.dataset.token;
-          picked.push(w);
-          history.push(btn);
-          btn.disabled = true;
-          btn.classList.add('opacity-60','token-on');
-          render();
-        });
-      });
-
-      btnSemak.addEventListener('click', ()=>{
-        const user = picked.join(" ");
-        resultEl.classList.remove('shake','result-good');
-        bankEl.querySelectorAll('button').forEach(b=>b.classList.remove('token-bad'));
-        if(user===correctPhrase){
-          resultEl.classList.add('result-good');
-          setInfo(`Bagus! ${target} disebut “${correctPhrase}”.`);
-          speak(`Bagus! Betul.`);
-        }else{
-          for(let i=0;i<picked.length;i++){
-            if(picked[i] !== (correctTokens[i] ?? "")){
-              if (history[i]) history[i].classList.add('token-bad');
-              break;
-            }
-          }
-          resultEl.classList.add('shake');
-          setInfo("Rujuk sebutan di atas dan susun semula mengikut urutan.");
-          speak("Belum tepat. Susun semula.");
+    function analyzeNum() {
+        const inp = document.getElementById('an-input');
+        const val = parseInt(inp.value);
+        
+        if (!val || val < 100 || val > 999) {
+            speak("Masukkan nombor tiga digit.");
+            inp.classList.add('shake'); setTimeout(()=>inp.classList.remove('shake'), 400);
+            return;
         }
-      });
 
-      document.getElementById('c-undo').addEventListener('click', ()=>{
-        const last = history.pop(); if(!last) return;
-        picked.pop(); last.disabled=false; last.classList.remove('opacity-60','token-on','token-bad'); render();
-      });
-      document.getElementById('c-clear').addEventListener('click', ()=>{
-        history.forEach(b=>{ b.disabled=false; b.classList.remove('opacity-60','token-on','token-bad'); });
-        picked=[]; history=[]; resultEl.classList.remove('result-good','shake'); render(); setInfo("Padam. Susun semula ikut sebutan rujukan.");
-      });
-      document.getElementById('c-new').addEventListener('click', ()=>loadWordBuilder(content));
+        const r = Math.floor(val / 100);
+        const p = Math.floor((val % 100) / 10);
+        const s = val % 10;
+
+        document.getElementById('an-result').classList.remove('hidden');
+        document.getElementById('val-r').textContent = r;
+        document.getElementById('digit-r').textContent = `Nilai: ${r*100}`;
+        
+        document.getElementById('val-p').textContent = p;
+        document.getElementById('digit-p').textContent = `Nilai: ${p*10}`;
+        
+        document.getElementById('val-s').textContent = s;
+        document.getElementById('digit-s').textContent = `Nilai: ${s}`;
+
+        document.getElementById('cerakin-text').textContent = `${r*100} + ${p*10} + ${s}`;
+        speak(`${val}. Iaitu ${r} ratus, ${p} puluh, dan ${s} sa.`);
+    }
+
+    /* =========================================
+       AKTIVITI 4: Kanta Digit
+       ========================================= */
+    let lensNum = 0;
+
+    function loadDigitLens(content) {
+        setInfo("Tekan 'Nombor Baru' dan intip nilainya.");
+        
+        content.innerHTML = `
+            <h3 class="text-4xl font-bold text-orange-500 mb-6 text-center">🔍 Kanta Digit</h3>
+            
+            <div class="text-center">
+                <div class="inline-block bg-white px-12 py-6 rounded-3xl border-4 border-orange-200 shadow-sm mb-8">
+                    <div id="lens-num-display" class="text-8xl font-black text-slate-800 tracking-widest">???</div>
+                </div>
+
+                <div id="lens-controls" class="flex justify-center gap-4 mb-8 opacity-50 pointer-events-none">
+                    <button onclick="peekLens('r')" class="btn-3d bg-pink-400 text-white font-bold py-3 px-6 rounded-xl text-xl">🔍 Ratus</button>
+                    <button onclick="peekLens('p')" class="btn-3d bg-blue-400 text-white font-bold py-3 px-6 rounded-xl text-xl">🔍 Puluh</button>
+                    <button onclick="peekLens('s')" class="btn-3d bg-emerald-400 text-white font-bold py-3 px-6 rounded-xl text-xl">🔍 Sa</button>
+                </div>
+
+                <div id="lens-output" class="h-20 text-3xl font-bold text-orange-600"></div>
+
+                <button onclick="startLens()" class="btn-3d bg-orange-500 text-white font-bold py-3 px-8 rounded-xl text-2xl mt-4">🎲 Nombor Baru</button>
+            </div>
+        `;
+    }
+
+    function startLens() {
+        lensNum = r(100, 999);
+        document.getElementById('lens-num-display').textContent = lensNum;
+        document.getElementById('lens-controls').classList.remove('opacity-50', 'pointer-events-none');
+        document.getElementById('lens-output').textContent = "";
+        speak(`Nombor ${lensNum}`);
+    }
+
+    function peekLens(type) {
+        const rVal = Math.floor(lensNum/100)*100;
+        const pVal = Math.floor((lensNum%100)/10)*10;
+        const sVal = lensNum%10;
+        
+        const out = document.getElementById('lens-output');
+        
+        if(type==='r') { out.textContent = `Nilai Ratus: ${rVal}`; speak(rVal); }
+        if(type==='p') { out.textContent = `Nilai Puluh: ${pVal}`; speak(pVal); }
+        if(type==='s') { out.textContent = `Nilai Sa: ${sVal}`; speak(sVal); }
     }
 
 
-    /* ====== Kawalan Umum ====== */
-    function clearActivity() {
-      currentActivity = 0;
-      document.getElementById('activity-content').innerHTML = `
-        <div class="text-center py-16">
-          <div class="text-6xl mb-4">🔢</div>
-          <h2 class="text-3xl font-bold text-gray-800 mb-4">Kemahiran Pemulihan: Nombor 100–1000</h2>
-          <p class="text-xl text-gray-600 mb-8">Pilih aktiviti di bawah untuk meneroka nilai nombor.</p>
-          <div class="text-4xl">👇</div>
-        </div>
-      `;
-      setInfo("Pilih aktiviti untuk mula belajar nombor!");
-    }
-    function nextActivity() {
-      if (currentActivity === 0) return loadActivity(1);
-      if (currentActivity < 5) return loadActivity(currentActivity + 1);
-      return loadActivity(1);
+    /* =========================================
+       AKTIVITI 5: Bina Sebutan (Word Builder)
+       ========================================= */
+    const ONES = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "lapan", "sembilan"];
+    let wbTarget = 0;
+    let wbCorrectPhrase = "";
+    let wbPicked = [];
+
+    function loadWordBuilder(content) {
+        setInfo("Susun perkataan menjadi sebutan nombor yang betul.");
+        generateWordData();
+
+        content.innerHTML = `
+            <h3 class="text-4xl font-bold text-rose-500 mb-6 text-center">🗣️ Bina Sebutan</h3>
+            
+            <div class="bg-rose-50 rounded-2xl p-6 mb-6 flex flex-col items-center border-2 border-rose-100">
+                <div class="text-sm font-bold text-rose-400 uppercase tracking-wide">SEBUT NOMBOR INI</div>
+                <div class="text-7xl font-black text-rose-900 mb-2">${wbTarget}</div>
+                <button onclick="speak('${wbCorrectPhrase}')" class="text-rose-500 font-bold bg-white px-3 py-1 rounded-full text-sm border border-rose-200 shadow-sm hover:bg-rose-50">🔊 Dengar</button>
+            </div>
+
+            <div id="wb-dropzone" class="min-h-[80px] bg-white border-2 border-dashed border-slate-300 rounded-xl p-4 flex flex-wrap gap-2 justify-center items-center mb-6">
+                <span class="text-slate-300 font-bold italic pointer-events-none">Letak perkataan di sini...</span>
+            </div>
+
+            <div id="wb-bank" class="flex flex-wrap justify-center gap-2 mb-8">
+                </div>
+
+            <div class="flex justify-center gap-4">
+                <button onclick="checkWB()" class="btn-3d bg-indigo-500 text-white font-bold py-3 px-8 rounded-xl text-xl">Semak ✅</button>
+                <button onclick="undoWB()" class="btn-3d bg-slate-400 text-white font-bold py-3 px-6 rounded-xl text-xl">↩️</button>
+                <button onclick="loadActivity(5)" class="btn-3d bg-emerald-500 text-white font-bold py-3 px-6 rounded-xl text-xl">Soalan Baru</button>
+            </div>
+        `;
+        renderBank();
     }
 
-    // Kekalkan TTS resume pada sesetengah pelayar
-    if ('speechSynthesis' in window) {
-      setInterval(() => { if (window.speechSynthesis.paused) window.speechSynthesis.resume(); }, 1000);
+    function generateWordData() {
+        wbTarget = r(100, 999);
+        wbCorrectPhrase = numberToText(wbTarget);
+        wbPicked = [];
+        
+        // Generate mixed tokens
+        let tokens = wbCorrectPhrase.split(" ");
+        let distractors = ["puluh", "ratus", "satu", "lima", "lapan"].sort(()=>0.5-Math.random()).slice(0,3);
+        window.wbTokens = [...tokens, ...distractors].sort(()=>0.5-Math.random());
     }
+
+    function numberToText(n) {
+        let r = Math.floor(n/100);
+        let rem = n%100;
+        let txt = [];
+        
+        // Ratus
+        if(r === 1) txt.push("seratus");
+        else txt.push(ONES[r], "ratus");
+        
+        // Puluh/Sa
+        if (rem === 0) {} // nothing
+        else if (rem < 10) txt.push(ONES[rem]);
+        else if (rem === 10) txt.push("sepuluh");
+        else if (rem === 11) txt.push("sebelas");
+        else if (rem < 20) txt.push(ONES[rem%10], "belas");
+        else {
+            let p = Math.floor(rem/10);
+            let s = rem%10;
+            txt.push(ONES[p], "puluh");
+            if(s>0) txt.push(ONES[s]);
+        }
+        return txt.join(" ");
+    }
+
+    function renderBank() {
+        const bank = document.getElementById('wb-bank');
+        bank.innerHTML = window.wbTokens.map((word, i) => `
+            <button onclick="pickWord('${word}', this)" class="token-btn bg-white border-2 border-slate-200 rounded-lg px-4 py-2 font-bold text-slate-600 hover:bg-slate-50 shadow-sm transform transition active:scale-95">
+                ${word}
+            </button>
+        `).join('');
+    }
+
+    function pickWord(word, btn) {
+        wbPicked.push(word);
+        btn.classList.add('opacity-0', 'pointer-events-none'); // Hide in bank
+        updateDropzone();
+    }
+
+    function updateDropzone() {
+        const zone = document.getElementById('wb-dropzone');
+        if(wbPicked.length === 0) {
+            zone.innerHTML = `<span class="text-slate-300 font-bold italic pointer-events-none">Letak perkataan di sini...</span>`;
+            return;
+        }
+        zone.innerHTML = wbPicked.map(w => `
+            <span class="bg-rose-100 text-rose-800 px-3 py-1 rounded-lg font-bold border border-rose-200 animate-[popIn_0.2s]">${w}</span>
+        `).join('');
+    }
+
+    function undoWB() {
+        if(wbPicked.length === 0) return;
+        const lastWord = wbPicked.pop();
+        // Find button in bank to show again
+        const bankBtns = document.getElementById('wb-bank').children;
+        for(let btn of bankBtns) {
+            if(btn.innerText.trim() === lastWord && btn.classList.contains('opacity-0')) {
+                btn.classList.remove('opacity-0', 'pointer-events-none');
+                break;
+            }
+        }
+        updateDropzone();
+    }
+
+    function checkWB() {
+        const attempt = wbPicked.join(" ");
+        const zone = document.getElementById('wb-dropzone');
+        
+        if (attempt === wbCorrectPhrase) {
+            zone.classList.add('bg-green-100', 'border-green-400');
+            triggerWin();
+            speak("Tahniah! Jawapan betul.");
+        } else {
+            zone.classList.add('shake', 'bg-red-50', 'border-red-300');
+            setTimeout(()=> zone.classList.remove('shake', 'bg-red-50', 'border-red-300'), 500);
+            speak("Cuba lagi.");
+        }
+    }
+
+    // Init TTS keepalive
+    if ('speechSynthesis' in window) setInterval(() => { if (window.speechSynthesis.paused) window.speechSynthesis.resume(); }, 1000);
+
   </script>
 </body>
 </html>
